@@ -14,6 +14,6 @@ public class Page2 extends NavigationFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.main_navigation_header, container, false);
+        return inflater.inflate(R.layout.page2, container, false);
     }
 }
