@@ -37,7 +37,7 @@
 
             <item
                 android:id="@+id/mail"
-                android:title="@string/mail"
+                android:title="@string/email"
                 android:icon="@drawable/email"/>
         </menu>
     </item>

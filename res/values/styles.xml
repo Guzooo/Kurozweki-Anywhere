@@ -48,4 +48,8 @@
     <style name="NormalText.Negative">
         <item name="android:textColor">@color/primary</item>
     </style>
+
+    <style name="NavigationTitleText">
+        <item name="android:textColorSecondary">@color/accentDark</item>
+    </style>
 </resources>

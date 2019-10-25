@@ -59,10 +59,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        if(currentFragment.isHome())
-            super.onBackPressed();
-        else
+        if(drawerLayout.isDrawerOpen(GravityCompat.START))
+            drawerLayout.closeDrawer(GravityCompat.START);
+        else if(!currentFragment.isHome())
             onNavigationItemSelected(navigationView.getMenu().getItem(0).setChecked(true));
+        else
+            super.onBackPressed();
     }
 
     @Override
@@ -125,14 +127,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void ClickCall(){
         Intent intent = new Intent(Intent.ACTION_DIAL);
         intent.setData(Uri.parse(PHONE_NUMBER));
-        Intent intentChose = Intent.createChooser(intent, "CALL");
+        Intent intentChose = Intent.createChooser(intent, getString(R.string.intent_call));
         startActivity(intentChose);
     }
 
     private void ClickMail(){
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.fromParts("mailto", MAIL, null));
-        Intent intentChose = Intent.createChooser(intent, "SEND E-MAIL...");
+        Intent intentChose = Intent.createChooser(intent, getString(R.string.intent_email));
         startActivity(intentChose);
     }
 
@@ -200,6 +202,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void SetHeaderLastDataSync(){
+        TextView lastSync = navigationHeader.findViewById(R.id.last_data_sync);
         //TODO: z bazy danych bierze dane;
     }
 
