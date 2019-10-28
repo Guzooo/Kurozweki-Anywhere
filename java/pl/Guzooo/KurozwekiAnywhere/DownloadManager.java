@@ -1,10 +1,15 @@
 package pl.Guzooo.KurozwekiAnywhere;
 
+import android.content.Context;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 public class DownloadManager {
+
+    private static final String PREFERENCES_NAME = "preferencedatabase";
+    private static final String PREFERENCE_LAST_SYNC = "lastsync";
 
     private static final String VERSION = "";
 
@@ -39,5 +44,15 @@ public class DownloadManager {
             }
         });
         readJSON.execute(VERSION);
+    }
+
+    public static void SavePreferenceLastSync(Context context){
+        Database.getSharedPreferencesEditor(PREFERENCES_NAME, context)
+                .putString(PREFERENCE_LAST_SYNC, UtilsCalendar.getTodayWithTime())
+                .apply(); //Gdyby data nie zmieniała się po aktualizacji, trzeba rozważyć dodanie commit;
+    }
+
+    public static String getPreferenceLastSync(Context context){
+        return Database.getSharedPreferences(PREFERENCES_NAME, context).getString(PREFERENCE_LAST_SYNC, context.getString(R.string.null_sync));
     }
 }

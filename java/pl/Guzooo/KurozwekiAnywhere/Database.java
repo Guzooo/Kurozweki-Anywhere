@@ -1,6 +1,7 @@
 package pl.Guzooo.KurozwekiAnywhere;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
@@ -43,4 +44,12 @@ public class Database extends SQLiteOpenHelper {
     }
 
     //TODO: grupowe usuwanie każdej tabeli
+
+    public static SharedPreferences getSharedPreferences(String name, Context context){
+        return context.getSharedPreferences(name, Context.MODE_PRIVATE);
+    }
+
+    public static SharedPreferences.Editor getSharedPreferencesEditor(String name, Context context){
+        return getSharedPreferences(name, context).edit();
+    }
 }

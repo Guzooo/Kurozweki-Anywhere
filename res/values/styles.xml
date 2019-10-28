@@ -40,6 +40,10 @@
         <item name="android:tint">@color/primary</item>
     </style>
 
+    <style name="ClickableImages.G">
+        <item name="android:tint">@color/gWhite</item>
+    </style>
+
     <style name="NormalText">
         <item name="android:textColor">@color/accent</item>
         <item name="android:textSize">@dimen/size_text_normal</item>
@@ -49,7 +53,29 @@
         <item name="android:textColor">@color/primary</item>
     </style>
 
+    <style name="TitleText">
+        <item name="android:textSize">@dimen/size_text_title</item>
+    </style>
+
+    <style name="TitleText.Negative">
+        <item name="android:textColor">@color/primary</item>
+    </style>
+
+    <style name="TitleText.G">
+        <item name="android:textColor">@color/gWhite</item>
+    </style>
+
     <style name="NavigationTitleText">
         <item name="android:textColorSecondary">@color/accentDark</item>
+    </style>
+
+    <style name="Button">
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:backgroundTint">@color/accentDark</item>
+    </style>
+
+    <style name="Button.Negative">
+        <item name="android:textColor">@color/accent</item>
+        <item name="android:backgroundTint">@color/primaryDark</item>
     </style>
 </resources>

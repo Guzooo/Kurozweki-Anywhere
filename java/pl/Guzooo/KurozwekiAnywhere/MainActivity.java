@@ -6,13 +6,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
@@ -21,14 +31,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private final String PHONE_NUMBER = "tel:123456789";
     private final String MAIL = "123@o2.pl";
-    private final String G_MESSENGER = "https://www.messenger.com/t/GuzoooApps";
+    private final String FACEBOOK_G = "https://www.facebook.com/GuzoooApps";
+    private final String MESSENGER_G = "https://www.messenger.com/t/GuzoooApps";
+    private final String FACEBOOK_PRINCIPAL = "https://www.facebook.com/Pałac-w-Kurozwękach-Kraina-bizonów-299669121906";
 
-    DrawerLayout drawerLayout;
-    ActionBarDrawerToggle drawerToggle;
-    NavigationView navigationView;
-    View navigationHeader;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle drawerToggle;
+    private NavigationView navigationView;
+    private View navigationHeader;
 
-    NavigationFragment currentFragment;
+    private View socialHeader = null;
+    int[] socialHeaderRoundCenter = new int[2];
+
+    private NavigationFragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +74,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        if(drawerLayout.isDrawerOpen(GravityCompat.START))
+        if(isVisibleSocialHeader())
+            VisibilitySocialHeader();
+        else if(drawerLayout.isDrawerOpen(GravityCompat.START))
             drawerLayout.closeDrawer(GravityCompat.START);
         else if(!currentFragment.isHome())
             onNavigationItemSelected(navigationView.getMenu().getItem(0).setChecked(true));
@@ -97,6 +114,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.mail:
                 ClickMail();
                 break;
+            case R.id.socials:
+                ClickSocials();
+                return true;
             case R.id.settings:
                 ClickSettings();
                 break;
@@ -115,11 +135,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.logo_g:
+                VisibilitySocialHeader(v, navigationHeader.findViewById(R.id.header_g));
+                break;
+            case R.id.logo_principal:
+                VisibilitySocialHeader(v, navigationHeader.findViewById(R.id.header_principal));
+                break;
             case R.id.news_feed:
                 ClickNewsFeed();
                 break;
             case R.id.sync:
                 ClickSync();
+                break;
+            case R.id.facebook_g:
+                ClickFacebookG();
+                break;
+            case R.id.messenger_g:
+                ClickMessengerG();
+                break;
+            case R.id.facebook_principal:
+                ClickFacebookPrincipal();
                 break;
         }
     }
@@ -138,13 +173,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(intentChose);
     }
 
+    private void ClickSocials(){
+        RecyclerView recyclerView = (RecyclerView) navigationView.getChildAt(0);
+        LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        LinearSmoothScroller smoothScroller = new LinearSmoothScroller(this){
+
+            @Override
+            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+                return 1;
+            }
+        };
+        smoothScroller.setTargetPosition(0);
+        manager.startSmoothScroll(smoothScroller);
+        if(!isVisibleSocialHeader())
+            VisibilitySocialHeader(navigationHeader.findViewById(R.id.logo_principal), navigationHeader.findViewById(R.id.header_principal));
+
+    }
+
     private void ClickSettings(){
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 
     private void ClickReportError(){
-        Uri uri = Uri.parse(G_MESSENGER);
+        Uri uri = Uri.parse(MESSENGER_G);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }
@@ -152,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void ReplaceFragment(NavigationFragment fragment){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, fragment);
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE); //TODO: zmiana
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN); //TODO: zmiana FADE
         transaction.commit();
         currentFragment = fragment;
         RefreshActionBar();
@@ -166,6 +218,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //TODO:pobieranko
     }
 
+    private void ClickFacebookG(){
+        OpenPage(FACEBOOK_G);
+    }
+
+    private void ClickMessengerG(){
+        OpenPage(MESSENGER_G);
+    }
+
+    private void ClickFacebookPrincipal(){
+        OpenPage(FACEBOOK_PRINCIPAL);
+    }
+
+    private void OpenPage(String url){
+        Uri uri = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+    }
+
     private void SetDrawerLayout(){
         drawerLayout = findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open_navigation_menu, R.string.close_navigation_menu){
@@ -177,6 +247,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+                if(isVisibleSocialHeader())
+                    VisibilitySocialHeader();
+            }
+
+            @Override
+            public boolean onOptionsItemSelected(MenuItem item) {
+                switch (item.getItemId()){
+                    case android.R.id.home:
+                        if(isVisibleSocialHeader())
+                            VisibilitySocialHeader();
+                        else
+                            return super.onOptionsItemSelected(item);
+                        break;
+                    default:
+                        return super.onOptionsItemSelected(item);
+                }
+                return true;
             }
         };
         drawerLayout.addDrawerListener(drawerToggle);
@@ -190,20 +277,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void SetNavigationHeader(){
         navigationHeader = navigationView.getHeaderView(0);
+        navigationHeader.findViewById(R.id.logo_g).setOnClickListener(this);
+        navigationHeader.findViewById(R.id.logo_principal).setOnClickListener(this);
         navigationHeader.findViewById(R.id.news_feed).setOnClickListener(this);
         navigationHeader.findViewById(R.id.sync).setOnClickListener(this);
+        navigationHeader.findViewById(R.id.facebook_g).setOnClickListener(this);
+        navigationHeader.findViewById(R.id.messenger_g).setOnClickListener(this);
+        navigationHeader.findViewById(R.id.facebook_principal).setOnClickListener(this);
         SetHeaderVersion();
         SetHeaderLastDataSync();
     }
 
     private void SetHeaderVersion(){
         TextView version = navigationHeader.findViewById(R.id.version);
-        //TODO znajdz aktualną wersje aplikacji dodaj na poczatku "v" i bedzie git
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
+            version.setText("v" + info.versionName);
+        } catch (PackageManager.NameNotFoundException e){
+            e.printStackTrace();
+        }
     }
 
     private void SetHeaderLastDataSync(){
         TextView lastSync = navigationHeader.findViewById(R.id.last_data_sync);
-        //TODO: z bazy danych bierze dane;
+        lastSync.setText(DownloadManager.getPreferenceLastSync(this));
     }
 
     private void SetActionBar(){
@@ -216,5 +313,56 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void RefreshActionBar(){
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(currentFragment.getActionBarTitle());
+    }
+
+    private void VisibilitySocialHeader(View center, View header){
+        center.getLocationOnScreen(socialHeaderRoundCenter);
+        socialHeaderRoundCenter[0] += center.getWidth()/2;
+        socialHeaderRoundCenter[1] += center.getHeight()/2;
+        socialHeader = header;
+        VisibilitySocialHeader();
+    }
+
+    private void VisibilitySocialHeader(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int x = socialHeader.getWidth();
+            int y = socialHeader.getHeight();
+            float radius = (float) Math.hypot(x,y);
+
+            if(isVisibleSocialHeader()) {
+                HideSocialHeader(radius);
+            } else {
+                ShowSocialHeader(radius);
+            }
+        } else {
+            if(isVisibleSocialHeader()) {
+                socialHeader.setVisibility(View.INVISIBLE);
+            } else {
+                socialHeader.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    private void ShowSocialHeader(float radius){
+        ViewAnimationUtils.createCircularReveal(socialHeader, socialHeaderRoundCenter[0], socialHeaderRoundCenter[1], 0, radius).start();
+        socialHeader.setVisibility(View.VISIBLE);
+    }
+
+    private void HideSocialHeader(float radius){
+        Animator anim = ViewAnimationUtils.createCircularReveal(socialHeader, socialHeaderRoundCenter[0], socialHeaderRoundCenter[1], radius, 0);
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                socialHeader.setVisibility(View.INVISIBLE);
+            }
+        });
+        anim.start();
+    }
+
+    private boolean isVisibleSocialHeader(){
+        if(socialHeader == null || socialHeader.getVisibility() != View.VISIBLE)
+            return false;
+        return true;
     }
 }

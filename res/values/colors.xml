@@ -7,4 +7,7 @@
 
     <color name="primaryTranslucent">#E6FFFFFF</color>
     <color name="accentTranslucent">#E6F0AC82</color>
+
+    <color name="gBlack">#000000</color>
+    <color name="gWhite">#FFFFFF</color>
 </resources>
