@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final String MESSENGER_G = "https://www.messenger.com/t/GuzoooApps";
     private final String FACEBOOK_PRINCIPAL = "https://www.facebook.com/Pałac-w-Kurozwękach-Kraina-bizonów-299669121906";
 
+    private final String BUNDLE_SOCIAL_HEADER = "socialheader";
+
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
@@ -51,14 +53,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Initial();
+        LoadInstanceState(savedInstanceState);
+        SetFragment();
         SetDrawerLayout();
         SetNavigationView();
         SetNavigationHeader();
         SetActionBar();
 
-
-        //TODO: jak sie obraca, sprawdz czy fragment jest nulem
         //TODO:Pobieranie check
+    }
+
+    private void Initial(){
+        navigationView = findViewById(R.id.navigation);
+        navigationHeader = navigationView.getHeaderView(0);
     }
 
     @Override
@@ -71,6 +79,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    private void LoadInstanceState(Bundle save){
+        if(save != null) {
+            int socialHeaderId = save.getInt(BUNDLE_SOCIAL_HEADER, 0);
+            socialHeader = navigationHeader.findViewById(socialHeaderId);
+            if(socialHeader != null)
+                socialHeader.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(canHideSocialHeader(false))
+            outState.putInt(BUNDLE_SOCIAL_HEADER, socialHeader.getId());
     }
 
     @Override
@@ -228,6 +252,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(intent);
     }
 
+    private void SetFragment(){
+        NavigationFragment fragment = (NavigationFragment) getSupportFragmentManager().findFragmentById(R.id.container);
+        if(fragment != null)
+            ReplaceFragment(fragment);
+    }
+
     private void SetDrawerLayout(){
         drawerLayout = findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open_navigation_menu, R.string.close_navigation_menu){
@@ -259,13 +289,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void SetNavigationView(){
-        navigationView = findViewById(R.id.navigation);
         navigationView.setNavigationItemSelectedListener(this);
-        onNavigationItemSelected(navigationView.getMenu().getItem(0).setChecked(true));
+        if(currentFragment == null)
+            onNavigationItemSelected(navigationView.getMenu().getItem(0).setChecked(true));
     }
 
     private void SetNavigationHeader(){
-        navigationHeader = navigationView.getHeaderView(0);
         navigationHeader.findViewById(R.id.logo_g).setOnClickListener(this);
         navigationHeader.findViewById(R.id.logo_principal).setOnClickListener(this);
         navigationHeader.findViewById(R.id.news_feed).setOnClickListener(this);
@@ -320,6 +349,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(scroll)
             return ScrollAndVisibilitySocialHeader(show);
         return VisibilitySocialHeader(show);
+    }
+
+    private void RestartNavigationHeader(){
+        socialHeader.setVisibility(View.VISIBLE);
     }
 
     private boolean ScrollAndVisibilitySocialHeader(final boolean show){
