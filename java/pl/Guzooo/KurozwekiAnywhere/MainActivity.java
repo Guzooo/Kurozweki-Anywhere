@@ -4,6 +4,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.ViewCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -74,8 +75,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        if(isVisibleSocialHeader())
-            VisibilitySocialHeader();
+        if(isChangeVisibilitySocialHeader(false, false))
+            return;
         else if(drawerLayout.isDrawerOpen(GravityCompat.START))
             drawerLayout.closeDrawer(GravityCompat.START);
         else if(!currentFragment.isHome())
@@ -136,10 +137,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.logo_g:
-                VisibilitySocialHeader(v, navigationHeader.findViewById(R.id.header_g));
+                isChangeVisibilitySocialHeader(v, navigationHeader.findViewById(R.id.header_g));
                 break;
             case R.id.logo_principal:
-                VisibilitySocialHeader(v, navigationHeader.findViewById(R.id.header_principal));
+                isChangeVisibilitySocialHeader(v, navigationHeader.findViewById(R.id.header_principal));
                 break;
             case R.id.news_feed:
                 ClickNewsFeed();
@@ -174,20 +175,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void ClickSocials(){
-        RecyclerView recyclerView = (RecyclerView) navigationView.getChildAt(0);
-        LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
-        LinearSmoothScroller smoothScroller = new LinearSmoothScroller(this){
-
-            @Override
-            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
-                return 1;
-            }
-        };
-        smoothScroller.setTargetPosition(0);
-        manager.startSmoothScroll(smoothScroller);
-        if(!isVisibleSocialHeader())
-            VisibilitySocialHeader(navigationHeader.findViewById(R.id.logo_principal), navigationHeader.findViewById(R.id.header_principal));
-
+        if(canShowSocialHeader(true))
+            isChangeVisibilitySocialHeader(navigationHeader.findViewById(R.id.logo_principal), navigationHeader.findViewById(R.id.header_principal));
+        else {
+            ScrollAndVisibilitySocialHeader(true);
+        }
     }
 
     private void ClickSettings(){
@@ -247,23 +239,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                if(isVisibleSocialHeader())
-                    VisibilitySocialHeader();
+                isChangeVisibilitySocialHeader(false, true);
             }
 
             @Override
             public boolean onOptionsItemSelected(MenuItem item) {
                 switch (item.getItemId()){
                     case android.R.id.home:
-                        if(isVisibleSocialHeader())
-                            VisibilitySocialHeader();
+                        if(isChangeVisibilitySocialHeader(false, false))
+                            return true;
                         else
                             return super.onOptionsItemSelected(item);
-                        break;
                     default:
                         return super.onOptionsItemSelected(item);
                 }
-                return true;
             }
         };
         drawerLayout.addDrawerListener(drawerToggle);
@@ -315,32 +304,79 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         actionBar.setTitle(currentFragment.getActionBarTitle());
     }
 
-    private void VisibilitySocialHeader(View center, View header){
+    private boolean isChangeVisibilitySocialHeader(View center, View header){
         center.getLocationOnScreen(socialHeaderRoundCenter);
         socialHeaderRoundCenter[0] += center.getWidth()/2;
         socialHeaderRoundCenter[1] += center.getHeight()/2;
         socialHeader = header;
-        VisibilitySocialHeader();
+        return isChangeVisibilitySocialHeader(true, true);
     }
 
-    private void VisibilitySocialHeader(){
+    private boolean isChangeVisibilitySocialHeader(boolean show, boolean scroll){
+        if(socialHeader == null)
+            return false;
+        if(!scroll && !ViewCompat.isAttachedToWindow(socialHeader))
+            return false;
+        if(scroll)
+            return ScrollAndVisibilitySocialHeader(show);
+        return VisibilitySocialHeader(show);
+    }
+
+    private boolean ScrollAndVisibilitySocialHeader(final boolean show){
+        RecyclerView recyclerView = (RecyclerView) navigationView.getChildAt(0);
+        LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        LinearSmoothScroller smoothScroller = new LinearSmoothScroller(this){
+
+            @Override
+            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+                return 1;
+            }
+
+            @Override
+            protected void onStop() {
+                super.onStop();
+                VisibilitySocialHeader(show);
+            }
+        };
+        smoothScroller.setTargetPosition(0);
+        manager.startSmoothScroll(smoothScroller);
+
+        if(canShowSocialHeader(show) || canHideSocialHeader(show))
+            return true;
+        return false;
+    }
+
+    private boolean VisibilitySocialHeader(boolean show){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int x = socialHeader.getWidth();
             int y = socialHeader.getHeight();
-            float radius = (float) Math.hypot(x,y);
+            float radius = (float) Math.hypot(x, y);
 
-            if(isVisibleSocialHeader()) {
-                HideSocialHeader(radius);
-            } else {
+            if (canShowSocialHeader(show)) {
                 ShowSocialHeader(radius);
+                return true;
+            } else if (canHideSocialHeader(show)) {
+                HideSocialHeader(radius);
+                return true;
             }
         } else {
-            if(isVisibleSocialHeader()) {
-                socialHeader.setVisibility(View.INVISIBLE);
-            } else {
+            if (canShowSocialHeader(show)) {
                 socialHeader.setVisibility(View.VISIBLE);
+                return true;
+            } else if (canHideSocialHeader(show)) {
+                socialHeader.setVisibility(View.INVISIBLE);
+                return true;
             }
         }
+        return false;
+    }
+
+    private boolean canShowSocialHeader(boolean show){
+        return (socialHeader == null || (socialHeader.getVisibility() != View.VISIBLE && show));
+    }
+
+    private boolean canHideSocialHeader(boolean show){
+        return (socialHeader != null && socialHeader.getVisibility() == View.VISIBLE && !show);
     }
 
     private void ShowSocialHeader(float radius){
@@ -358,11 +394,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
         anim.start();
-    }
-
-    private boolean isVisibleSocialHeader(){
-        if(socialHeader == null || socialHeader.getVisibility() != View.VISIBLE)
-            return false;
-        return true;
     }
 }
