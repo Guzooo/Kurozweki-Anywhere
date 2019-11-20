@@ -3,10 +3,12 @@ package pl.Guzooo.KurozwekiAnywhere;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +23,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -51,6 +54,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d("color", Configuration.UI_MODE_NIGHT_MASK + " to");
+        AppCompatDelegate.setDefaultNightMode(Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(this).getString("theme", "3")));
+        /*int i = new Random().nextInt(5);
+
+        switch (i){
+            case 0:
+                setTheme(R.style.AppTheme_LightMode);
+                break;
+            case 1:
+                setTheme(R.style.AppTheme_HardDarkMode);
+                break;
+            case 2:
+                setTheme(R.style.AppTheme_AccentDarkMode);
+                break;
+            case 3:
+                setTheme(R.style.AppTheme_DarkMode);
+                break;
+            case 4:
+                setTheme(R.style.AppTheme_AccentLightMode);
+                break;
+
+        }*/
         setContentView(R.layout.activity_main);
 
         Initial();
@@ -349,10 +375,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(scroll)
             return ScrollAndVisibilitySocialHeader(show);
         return VisibilitySocialHeader(show);
-    }
-
-    private void RestartNavigationHeader(){
-        socialHeader.setVisibility(View.VISIBLE);
     }
 
     private boolean ScrollAndVisibilitySocialHeader(final boolean show){

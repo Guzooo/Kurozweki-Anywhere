@@ -1,0 +1,13 @@
+<resources>
+    <string-array name="themes">
+        <item>@string/light_theme</item>
+        <item>@string/dark_theme</item>
+        <item>@string/battery_theme</item>
+    </string-array>
+
+    <string-array name="themes_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+</resources>

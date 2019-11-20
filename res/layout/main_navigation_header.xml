@@ -8,7 +8,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="bottom"
-        android:background="@color/accent">
+        android:background="?attr/appColorSecondary">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -129,7 +129,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="bottom"
-        android:background="@color/accent"
+        android:background="?attr/appColorSecondary"
         android:visibility="invisible"
         android:clickable="true">
 

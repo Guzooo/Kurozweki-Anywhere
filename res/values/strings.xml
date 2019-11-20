@@ -2,7 +2,7 @@
     <string name="app_name">New Unnamed App</string>
     <string name="app_G">© Guzooo 2019</string>
     <string name="app_principal">Pałac w Kurozwękach</string>
-    
+
     <string name="home_page">Home</string>
     <string name="page1">Page 1</string>
     <string name="page2">Page 2</string>
@@ -25,4 +25,10 @@
     <string name="more">More</string>
 
     <string name="error_database">Database error</string>
+
+    <string name="select_theme">Select theme</string>
+    <string name="light_theme">Light</string>
+    <string name="dark_theme">Dark</string>
+    <string name="battery_theme">Set by Battery Saver</string>
+    <string name="system_theme">System default</string>
 </resources>
