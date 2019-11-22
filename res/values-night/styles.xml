@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="AppTheme.HardDarkMode">
+        <item name="appColorFirst">@color/hardDark</item>
+        <item name="appColorFirstDark">@color/hardDarkDark</item>
+        <item name="appColorFirstTranslucent">@color/hardDarkTranslucent</item>
+    </style>
+
     <style name="AppTheme" parent="Theme.AppCompat">
         <item name="appColorFirst">@color/dark</item>
         <item name="appColorFirstDark">@color/darkDark</item>

@@ -1,10 +1,19 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ListPreference
-        app:entries="@array/themes"
-        app:entryValues="@array/themes_values"
-        app:key="theme"
-        app:title="@string/select_theme"
-        app:useSimpleSummaryProvider="true" />
+    <PreferenceCategory
+        app:title="@string/settings_theme">
 
+        <ListPreference
+            app:entries="@array/themes"
+            app:entryValues="@array/themes_values"
+            app:key="theme"
+            app:title="@string/select_theme"
+            app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreference
+            app:key="harddark"
+            app:title="@string/hard_dark_mode"
+            app:summary="@string/hard_dark_mode_summary"
+            app:defaultValue="false"/>
+    </PreferenceCategory>
 </PreferenceScreen>

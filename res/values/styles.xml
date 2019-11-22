@@ -1,50 +1,5 @@
 <resources>
 
-  <!--  <style name="AppTheme.LightMode">
-        <item name="appColorFirst">@color/light</item>
-        <item name="appColorFirstDark">@color/lightDark</item>
-        <item name="appColorFirstTranslucent">@color/lightTranslucent</item>
-        <item name="appColorSecondary">@color/accent</item>
-        <item name="appColorSecondaryDark">@color/accentDark</item>
-        <item name="android:windowLightStatusBar">true</item>
-    </style>
-
-    <style name="AppTheme.DarkMode">
-        <item name="appColorFirst">@color/dark</item>
-        <item name="appColorFirstDark">@color/darkDark</item>
-        <item name="appColorFirstTranslucent">@color/darkTranslucent</item>
-        <item name="appColorSecondary">@color/accent</item>
-        <item name="appColorSecondaryDark">@color/accentDark</item>
-        <item name="android:windowLightStatusBar">false</item>
-    </style> &lt;!&ndash; spróbować accent z accent dark zamienic &ndash;&gt;
-
-    <style name="AppTheme.HardDarkMode">
-        <item name="appColorFirst">@color/hardDark</item>
-        <item name="appColorFirstDark">@color/hardDarkDark</item>
-        <item name="appColorFirstTranslucent">@color/hardDarkTranslucent</item>
-        <item name="appColorSecondary">@color/accent</item>
-        <item name="appColorSecondaryDark">@color/accentDark</item>
-        <item name="android:windowLightStatusBar">false</item>
-    </style>
-
-    <style name="AppTheme.AccentLightMode">
-        <item name="appColorFirst">@color/accent</item>
-        <item name="appColorFirstDark">@color/accentDark</item>
-        <item name="appColorFirstTranslucent">@color/accentTranslucent</item>
-        <item name="appColorSecondary">@color/light</item>
-        <item name="appColorSecondaryDark">@color/lightDark</item>
-        <item name="android:windowLightStatusBar">true</item>
-    </style>
-
-    <style name="AppTheme.AccentDarkMode">
-        <item name="appColorFirst">@color/accent</item>
-        <item name="appColorFirstDark">@color/accentDark</item>
-        <item name="appColorFirstTranslucent">@color/accentTranslucent</item>
-        <item name="appColorSecondary">@color/hardDark</item>
-        <item name="appColorSecondaryDark">@color/hardDarkDark</item>
-        <item name="android:windowLightStatusBar">false</item>
-    </style>
--->
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <item name="appColorFirst">@color/light</item>
         <item name="appColorFirstDark">@color/lightDark</item>
