@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/height_navigation_header">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="bottom"
+        android:background="?attr/colorAccentG">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_standard">
+
+            <ImageView
+                android:id="@+id/logo_g"
+                android:layout_weight="1"
+                android:src="@mipmap/ic_g"
+                style="@style/Logo"/>
+
+            <ImageView
+                android:layout_weight="1"
+                android:src="@mipmap/ic_launcher"
+                style="@style/Logo"/>
+
+            <ImageView
+                android:id="@+id/logo_principal"
+                android:layout_weight="1"
+                android:src="@mipmap/ic_principal"
+                style="@style/Logo"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/news_feed"
+                android:layout_marginTop="@dimen/margin_standard"
+                android:layout_marginBottom="@dimen/margin_standard"
+                android:layout_marginLeft="@dimen/margin_standard"
+                android:layout_marginStart="@dimen/margin_standard"
+                android:layout_gravity="center"
+                android:src="@drawable/notifications_none"
+                style="@style/ClickableImages.Negative"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/margin_standard"
+                android:layout_gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/version"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin_standard"
+                    android:gravity="center"
+                    style="@style/NormalText.Negative"/>
+
+                <TextView
+                    android:id="@+id/last_data_sync"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    style="@style/NormalText.Negative"/>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/sync"
+                android:layout_marginTop="@dimen/margin_standard"
+                android:layout_marginBottom="@dimen/margin_standard"
+                android:layout_marginRight="@dimen/margin_standard"
+                android:layout_marginEnd="@dimen/margin_standard"
+                android:layout_gravity="center"
+                android:src="@drawable/sync"
+                style="@style/ClickableImages.Negative"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/header_g"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="bottom"
+        android:background="@color/gBlack"
+        android:visibility="invisible"
+        android:clickable="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_G"
+            android:gravity="center"
+            android:layout_marginBottom="@dimen/margin_standard"
+            style="@style/TitleText.G"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginStart="@dimen/margin_standard"
+            android:layout_marginEnd="@dimen/margin_standard"
+            android:layout_marginBottom="@dimen/margin_standard">
+
+            <ImageView
+                android:id="@+id/facebook_g"
+                android:src="@drawable/facebook"
+                android:layout_marginRight="@dimen/margin_standard"
+                android:layout_marginEnd="@dimen/margin_standard"
+                style="@style/ClickableImages.G"/>
+
+            <ImageView
+                android:id="@+id/messenger_g"
+                android:src="@drawable/messenger"
+                style="@style/ClickableImages.G"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/header_principal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="bottom"
+        android:background="?attr/colorAccentG"
+        android:visibility="invisible"
+        android:clickable="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_principal"
+            android:gravity="center"
+            android:layout_marginBottom="@dimen/margin_standard"
+            style="@style/TitleText.Negative"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginStart="@dimen/margin_standard"
+            android:layout_marginEnd="@dimen/margin_standard"
+            android:layout_marginBottom="@dimen/margin_standard">
+
+            <ImageView
+                android:id="@+id/facebook_principal"
+                android:src="@drawable/facebook"
+                style="@style/ClickableImages.Negative"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

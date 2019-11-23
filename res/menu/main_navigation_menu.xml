@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/home"
+            android:title="@string/home_page"
+            android:icon="@drawable/home"/>
+
+        <item
+            android:id="@+id/page1"
+            android:title="@string/page1"
+            android:icon="@drawable/page1"/>
+
+        <item
+            android:id="@+id/page2"
+            android:title="@string/page2"
+            android:icon="@drawable/page2"/>
+
+        <item
+            android:id="@+id/page3"
+            android:title="@string/page3"
+            android:icon="@drawable/page3"/>
+    </group>
+
+    <item android:title="@string/contact">
+
+        <menu>
+
+            <item
+                android:id="@+id/call"
+                android:title="@string/call"
+                android:icon="@drawable/call"/>
+
+            <item
+                android:id="@+id/mail"
+                android:title="@string/email"
+                android:icon="@drawable/email"/>
+
+            <item
+                android:id="@+id/socials"
+                android:title="@string/more"
+                android:icon="@drawable/more"/>
+        </menu>
+    </item>
+
+    <item
+        android:title="@string/other">
+
+        <menu>
+
+            <item
+                android:id="@+id/settings"
+                android:title="@string/settings"
+                android:icon="@drawable/settings"/>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/report_error"
+        android:title="@string/report_error"
+        android:icon="@drawable/report_error"/>
+
+    <item android:enabled="false"/>
+</menu>

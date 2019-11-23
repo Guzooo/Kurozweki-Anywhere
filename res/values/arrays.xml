@@ -1,0 +1,51 @@
+<resources>
+    <string-array name="themes">
+        <item>@string/theme_light</item>
+        <item>@string/theme_dark</item>
+        <item>@string/theme_battery</item>
+    </string-array>
+
+    <string-array name="themes_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="download_info">
+        <item>@string/download_info_only_wifi</item>
+        <item>@string/download_info_always</item>
+        <item>@string/download_info_never</item>
+    </string-array>
+
+    <string-array name="download_info_value">
+        <item>@string/DOWNLOAD_INFO_ONLY_WIFI</item>
+        <item>@string/DOWNLOAD_INFO_ALWAYS</item>
+        <item>@string/DOWNLOAD_INFO_NEVER</item>
+    </string-array>
+
+    <string-array name="download_database">
+        <item>@string/download_database_auto_only_wifi</item>
+        <item>@string/download_database_auto</item>
+        <item>@string/download_database_manual</item>
+    </string-array>
+
+    <string-array name="download_database_value">
+        <item>@string/DOWNLOAD_DATABASE_AUTO_ONLY_WIFI</item>
+        <item>@string/DOWNLOAD_DATABASE_AUTO</item>
+        <item>@string/DOWNLOAD_DATABASE_MANUAL</item>
+    </string-array>
+
+    <string-array name="download_images">
+        <item>@string/download_images_live_only_wifi</item>
+        <item>@string/download_images_live</item>
+        <item>@string/download_images_click</item>
+        <item>@string/download_images_save</item>
+    </string-array>
+
+    <string-array name="download_images_value">
+        <item>@string/DOWNLOAD_IMAGES_LIVE_ONLY_WIFI</item>
+        <item>@string/DOWNLOAD_IMAGES_LIVE</item>
+        <item>@string/DOWNLOAD_IMAGES_CLICK</item>
+        <item>@string/DOWNLOAD_IMAGES_SAVE</item>
+    </string-array>
+</resources>
