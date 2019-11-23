@@ -66,11 +66,7 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
     }
 
     private void SetTheme(){
-        int mode = Integer.valueOf(SettingsActivity.getTheme(this));
-        if(mode == -1 && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
-            mode = 3;
-        }
-        AppCompatDelegate.setDefaultNightMode(mode);
+        AppCompatDelegate.setDefaultNightMode(SettingsActivity.getTheme(this));
     }
 
     private void Initial(){

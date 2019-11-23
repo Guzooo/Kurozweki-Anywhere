@@ -27,11 +27,25 @@
     <string name="error_database">Database error</string>
 
     <string name="settings_theme">App theme</string>
-    <string name="select_theme">Select theme</string>
-    <string name="light_theme">Light</string>
-    <string name="dark_theme">Dark</string>
-    <string name="battery_theme">Set by Battery Saver</string>
-    <string name="system_theme">System default</string>
-    <string name="hard_dark_mode">Hard dark mode</string>
-    <string name="hard_dark_mode_summary">If dark mode is enable, dark is more dark. Ideal for OLED/AMOLED display.</string>
+    <string name="title_theme">Select theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_battery">Set by Battery Saver</string>
+    <string name="theme_system">System default</string>
+    <string name="title_hard_dark_mode">Hard dark mode</string>
+    <string name="summary_hard_dark_mode">If dark mode is enable, dark is more dark. Ideal for OLED/AMOLED display.</string>
+    <string name="settings_download">Download</string>
+    <string name="title_download_info">When to automatically check information online</string>
+    <string name="download_info_only_wifi">Only by Wi-Fi</string>
+    <string name="download_info_always">Always</string>
+    <string name="download_info_never">Never</string>
+    <string name="title_download_database">Once a data update is found, the download will</string>
+    <string name="download_database_auto_only_wifi">Automatically only by Wi-Fi</string>
+    <string name="download_database_auto">Automatically</string>
+    <string name="download_database_manual">After confirmation</string>
+    <string name="title_download_images">Download images</string>
+    <string name="download_images_live_only_wifi">Download live only by Wi-Fi, don\'t save</string>
+    <string name="download_images_live">Download live, don\'t save</string>
+    <string name="download_images_click">Download before click, don\'t save</string>
+    <string name="download_images_save">Save on device</string>
 </resources>

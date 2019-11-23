@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="THEME_ID">0</string>
+    <string name="HARD_DARK_ID">1</string>
+    <string name="DOWNLOAD_INFO_ID">2</string>
+    <string name="DOWNLOAD_DATABASE_ID">3</string>
+    <string name="DOWNLOAD_IMAGES_ID">4</string>
+
+    <string name="DOWNLOAD_INFO_ONLY_WIFI">0</string>
+    <string name="DOWNLOAD_INFO_ALWAYS">1</string>
+    <string name="DOWNLOAD_INFO_NEVER">2</string>
+
+    <string name="DOWNLOAD_DATABASE_AUTO_ONLY_WIFI">0</string>
+    <string name="DOWNLOAD_DATABASE_AUTO">1</string>
+    <string name="DOWNLOAD_DATABASE_MANUAL">2</string>
+
+    <string name="DOWNLOAD_IMAGES_LIVE_ONLY_WIFI">0</string>
+    <string name="DOWNLOAD_IMAGES_LIVE">1</string>
+    <string name="DOWNLOAD_IMAGES_CLICK">2</string>
+    <string name="DOWNLOAD_IMAGES_SAVE">3</string>
+</resources>
