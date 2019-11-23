@@ -9,11 +9,10 @@
     <color name="darkTranslucent">#E6363636</color>
 
     <color name="hardDark">#000000</color>
-    <color name="hardDarkDark">#363636</color>
     <color name="hardDarkTranslucent">#E6000000</color>
 
     <color name="accent">#F0AC82</color>
-    <color name="accentDark">#E19A6C</color>
+    <color name="accentDark">#E19A6C</color><!--usun-->
     <color name="accentTranslucent">#E6F0AC82</color>
 
     <color name="gBlack">#000000</color>

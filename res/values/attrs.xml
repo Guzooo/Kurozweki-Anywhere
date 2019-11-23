@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="appColorFirst" format="reference"/>
-    <attr name="appColorFirstDark" format="reference"/>
-    <attr name="appColorFirstTranslucent" format="reference"/>
-    <attr name="appColorSecondary" format="reference"/>
+    <attr name="colorPrimaryG" format="reference"/>
+    <attr name="colorPrimaryDarkG" format="reference"/>
+    <attr name="colorPrimaryTranslucentG" format="reference"/>
+    <attr name="colorSecondaryG" format="reference"/>
+    <attr name="colorSecondaryDarkG" format="reference"/>
+    <attr name="colorAccentG" format="reference"/>
     <attr name="appColorSecondaryDark" format="reference"/>
 </resources>

@@ -48,13 +48,13 @@
     </item>
 
     <item
-        android:title="@string/settings">
+        android:title="@string/other">
 
         <menu>
 
             <item
                 android:id="@+id/settings"
-                android:title="@string/more"
+                android:title="@string/settings"
                 android:icon="@drawable/settings"/>
         </menu>
     </item>

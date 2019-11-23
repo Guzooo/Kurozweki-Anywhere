@@ -1,29 +1,37 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light">
-        <item name="appColorFirst">@color/light</item>
-        <item name="appColorFirstDark">@color/lightDark</item>
-        <item name="appColorFirstTranslucent">@color/lightTranslucent</item>
-        <item name="appColorSecondary">@color/accent</item>
+        <item name="colorPrimaryG">@color/light</item>
+        <item name="colorPrimaryDarkG">@color/lightDark</item>
+        <item name="colorPrimaryTranslucentG">@color/lightTranslucent</item>
+        <item name="colorSecondaryG">@color/dark</item>
+        <item name="colorSecondaryDarkG">@color/darkDark</item>
+        <item name="colorAccentG">@color/accent</item>
         <item name="appColorSecondaryDark">@color/accentDark</item>
 
-        <item name="colorPrimary">?attr/appColorFirstTranslucent</item>
-        <item name="colorPrimaryDark">?attr/appColorFirstTranslucent</item>
-        <item name="colorAccent">?attr/appColorSecondary</item>
+        <item name="colorPrimary">?attr/colorPrimaryTranslucentG</item>
+        <item name="colorPrimaryDark">?attr/colorPrimaryTranslucentG</item>
+        <item name="colorAccent">?attr/colorAccentG</item>
 
         <item name="android:textViewStyle">@style/NormalText</item>
 
-        <item name="android:colorBackground">?attr/appColorFirst</item>
+        <item name="android:colorBackground">?attr/colorPrimaryG</item>
        <!-- <item name="android:fitsSystemWindows">true</item>-->
         <item name="android:windowLightStatusBar">true</item>
 
-        <item name="android:statusBarColor">?attr/appColorFirstTranslucent</item>
-        <item name="android:navigationBarColor">?attr/appColorFirstTranslucent</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryTranslucentG</item>
+        <item name="android:navigationBarColor">?attr/colorPrimaryTranslucentG</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowActionBarOverlay">false</item>
         <item name="android:windowActionBar">false</item>
 
        <!-- <item name="android:scrollbars">none</item>-->
+
+        <item name="preferenceTheme">@style/AppTheme.PreferenceTheme</item>
+    </style>
+
+    <style name="AppTheme.PreferenceTheme" parent="PreferenceThemeOverlay.v14.Material">
+        <item name="android:tint">?attr/colorAccentG</item>
     </style>
 
     <style name="Logo">
@@ -41,11 +49,11 @@
         <item name="android:layout_width">@dimen/length_minimal</item>
         <item name="android:layout_height">@dimen/length_minimal</item>
         <item name="android:padding">@dimen/padding_clickable_image</item>
-        <item name="android:tint">?attr/appColorSecondary</item>
+        <item name="android:tint">?attr/colorAccentG</item>
     </style>
 
     <style name="ClickableImages.Negative">
-        <item name="android:tint">?attr/appColorFirst</item>
+        <item name="android:tint">?attr/colorPrimaryG</item>
     </style>
 
     <style name="ClickableImages.G">
@@ -53,12 +61,12 @@
     </style>
 
     <style name="NormalText">
-        <item name="android:textColor">?attr/appColorSecondary</item>
+        <item name="android:textColor">?attr/colorAccentG</item>
         <item name="android:textSize">@dimen/size_text_normal</item>
     </style>
 
     <style name="NormalText.Negative">
-        <item name="android:textColor">?attr/appColorFirst</item>
+        <item name="android:textColor">?attr/colorPrimaryG</item>
     </style>
 
     <style name="TitleText">
@@ -66,7 +74,7 @@
     </style>
 
     <style name="TitleText.Negative">
-        <item name="android:textColor">?attr/appColorFirst</item>
+        <item name="android:textColor">?attr/colorPrimaryG</item>
     </style>
 
     <style name="TitleText.G">
@@ -74,16 +82,16 @@
     </style>
 
     <style name="NavigationTitleText">
-        <item name="android:textColorSecondary">?attr/appColorSecondaryDark</item>
+        <item name="android:textColorSecondary">?attr/colorAccentG</item>
     </style>
 
     <style name="Button">
-        <item name="android:textColor">?attr/appColorFirst</item>
+        <item name="android:textColor">?attr/colorPrimaryG</item>
         <item name="android:backgroundTint">?attr/appColorSecondaryDark</item>
     </style>
 
     <style name="Button.Negative">
-        <item name="android:textColor">?attr/appColorSecondary</item>
-        <item name="android:backgroundTint">?attr/appColorFirstDark</item>
+        <item name="android:textColor">?attr/colorAccentG</item>
+        <item name="android:backgroundTint">?attr/colorPrimaryDarkG</item>
     </style>
 </resources>

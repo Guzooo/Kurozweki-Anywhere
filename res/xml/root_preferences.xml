@@ -2,7 +2,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        app:title="@string/settings_theme">
+        app:title="@string/settings_theme"
+        app:icon="@drawable/color_palette">
 
         <ListPreference
             app:title="@string/title_theme"
@@ -18,7 +19,9 @@
             app:defaultValue="false"/>
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/settings_download">
+    <PreferenceCategory
+        app:title="@string/settings_download"
+        app:icon="@drawable/download">
 
         <ListPreference
             app:title="@string/title_download_info"
