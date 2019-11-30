@@ -237,6 +237,7 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
 
     private void ClickSync(){
         //TODO:pobieranko
+        DownloadManager.Check(false, this);
     }
 
     private void ClickFacebookG(){

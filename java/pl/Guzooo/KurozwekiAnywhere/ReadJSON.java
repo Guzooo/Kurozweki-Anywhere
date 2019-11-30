@@ -1,6 +1,7 @@
 package pl.Guzooo.KurozwekiAnywhere;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,9 +47,10 @@ public class ReadJSON extends AsyncTask<String, Integer, Boolean> {
             ArrayList<ArrayList<JSONObject>> objects = new ArrayList<>();
             for (int i = 0; i < strings.length; i++){
                 ArrayList<JSONObject> jsonObjects = new ArrayList<>();
-                BufferedReader reader = new BufferedReader((new InputStreamReader(new URL(strings[i]).openStream())));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(strings[i]).openStream()));
                 String line;
-                while ((line = reader.readLine()) != null || line.equals("")){
+                while ((line = reader.readLine()) != null && !line.equals("")){
+                    Log.d("JSONek", ""+line);
                     jsonObjects.add(new JSONObject(line));
                 }
                 reader.close();
