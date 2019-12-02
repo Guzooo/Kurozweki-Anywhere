@@ -24,7 +24,13 @@ public class DownloadManager {
     private static final String LANGUAGE = "en";
     private static final String DATABASES_VERSION = "/DATABASES_VERSION.txt";
 
-    public static void Check(boolean automatic, final Context context) {
+    public interface DownloadEffects{
+        void Start();
+        void End(boolean successful);
+        void NoInternet();
+    }
+
+    public static void Check(boolean automatic, final DownloadEffects effects, final Context context) {
         String preferenceDownload = SettingsActivity.getDownloadInfo(context);
         int internetConnect = getInternetConnection(context);
 
@@ -34,14 +40,14 @@ public class DownloadManager {
         }
 
         if (internetConnect == INTERNET_DISCONNECT) {
-            Toast.makeText(context, "BRAK INTERNETU, ZIOOOM", Toast.LENGTH_SHORT).show();
+            effects.NoInternet();
             return; //TODO:Brak internetu;
         }
 
         ReadJSON.ReadJSONMethod readJSONMethod = new ReadJSON.ReadJSONMethod() {
             @Override
             public void onPreRead() {
-                Toast.makeText(context, "sprawdzam", Toast.LENGTH_SHORT).show();
+                effects.Start();
             }
 
             @Override
@@ -55,7 +61,6 @@ public class DownloadManager {
                             SQLiteDatabase db = Database.getWrite(context);
                             db.update(Database.DATABASES_VERSION_TITLE, contentValues, Database.DATABASES_VERSION_DATABASE_NAME + " = ?", new String[]{objects.get(i).get(ii).getString(Database.DATABASES_VERSION_DATABASE_NAME)});
                             db.close();
-                            Log.d("data", "poszło zapusane propably");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -77,6 +82,7 @@ public class DownloadManager {
 
             @Override
             public void onPostRead(boolean successful) {
+                effects.End(successful);
                 if (successful)
                     Toast.makeText(context, "uda się", Toast.LENGTH_SHORT).show();
                 else

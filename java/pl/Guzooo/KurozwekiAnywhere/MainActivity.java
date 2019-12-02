@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -24,6 +27,8 @@ import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.view.animation.LinearInterpolator;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
@@ -42,6 +47,9 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
     private View navigationHeader;
+
+    private View headerSync;
+    private boolean headerSyncOtherImage;
 
     private View socialHeader = null;
     int[] socialHeaderRoundCenter = new int[2];
@@ -237,7 +245,32 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
 
     private void ClickSync(){
         //TODO:pobieranko
-        DownloadManager.Check(false, this);
+        DownloadManager.DownloadEffects effects = new DownloadManager.DownloadEffects() {
+            ObjectAnimator infinityRotate;
+            @Override
+            public void Start() {
+                if(headerSyncOtherImage) {
+                    Animations.ChangeIcon((ImageView) headerSync, R.drawable.sync);
+                    headerSyncOtherImage = false;
+                }
+                infinityRotate = Animations.StartSpinIcon(headerSync);
+            }
+
+            @Override
+            public void End(boolean successful) {
+                infinityRotate.setRepeatCount(0);
+                if(!successful) {
+                    Animations.ChangeIcon((ImageView) headerSync, R.drawable.sync_problem);
+                    headerSyncOtherImage = true;
+                }
+            }
+
+            @Override
+            public void NoInternet() {
+                Animations.ErrorSpinIcon(headerSync);
+            }
+        };
+        DownloadManager.Check(false, effects, this);
     }
 
     private void ClickFacebookG(){
@@ -301,10 +334,11 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
     }
 
     private void SetNavigationHeader(){
+        headerSync = navigationHeader.findViewById(R.id.sync);
         navigationHeader.findViewById(R.id.logo_g).setOnClickListener(this);
         navigationHeader.findViewById(R.id.logo_principal).setOnClickListener(this);
         navigationHeader.findViewById(R.id.news_feed).setOnClickListener(this);
-        navigationHeader.findViewById(R.id.sync).setOnClickListener(this);
+        headerSync.setOnClickListener(this);
         navigationHeader.findViewById(R.id.facebook_g).setOnClickListener(this);
         navigationHeader.findViewById(R.id.messenger_g).setOnClickListener(this);
         navigationHeader.findViewById(R.id.facebook_principal).setOnClickListener(this);
@@ -388,10 +422,10 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
             float radius = (float) Math.hypot(x, y);
 
             if (canShowSocialHeader(show)) {
-                ShowSocialHeader(radius);
+                Animations.ShowCircle(socialHeader, socialHeaderRoundCenter[0], socialHeaderRoundCenter[1], radius);
                 return true;
             } else if (canHideSocialHeader(show)) {
-                HideSocialHeader(radius);
+                Animations.HideCircle(socialHeader, socialHeaderRoundCenter[0], socialHeaderRoundCenter[1], radius);
                 return true;
             }
         } else {
@@ -412,22 +446,5 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
 
     private boolean canHideSocialHeader(boolean show){
         return (socialHeader != null && socialHeader.getVisibility() == View.VISIBLE && !show);
-    }
-
-    private void ShowSocialHeader(float radius){
-        ViewAnimationUtils.createCircularReveal(socialHeader, socialHeaderRoundCenter[0], socialHeaderRoundCenter[1], 0, radius).start();
-        socialHeader.setVisibility(View.VISIBLE);
-    }
-
-    private void HideSocialHeader(float radius){
-        Animator anim = ViewAnimationUtils.createCircularReveal(socialHeader, socialHeaderRoundCenter[0], socialHeaderRoundCenter[1], radius, 0);
-        anim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                socialHeader.setVisibility(View.INVISIBLE);
-            }
-        });
-        anim.start();
     }
 }

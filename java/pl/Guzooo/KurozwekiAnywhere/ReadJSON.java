@@ -49,10 +49,8 @@ public class ReadJSON extends AsyncTask<String, Integer, Boolean> {
                 ArrayList<JSONObject> jsonObjects = new ArrayList<>();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(strings[i]).openStream()));
                 String line;
-                while ((line = reader.readLine()) != null && !line.equals("")){
-                    Log.d("JSONek", ""+line);
+                while ((line = reader.readLine()) != null && !line.equals(""))
                     jsonObjects.add(new JSONObject(line));
-                }
                 reader.close();
                 objects.add(jsonObjects);
                 publishProgress(i, strings.length);
