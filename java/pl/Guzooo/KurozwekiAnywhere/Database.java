@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
+import pl.Guzooo.KurozwekiAnywhere.Events.EventObject;
+
 public class Database extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "kurozwekianywhere";
@@ -18,8 +20,6 @@ public class Database extends SQLiteOpenHelper {
     public static final String DATABASES_VERSION_DATABASE_NAME = "DATABASE_NAME";
     public static final String DATABASES_VERSION_VERSION_ON_DEVICE = "VERSION_ON_DEVICES";
     public static final String DATABASES_VERSION_VERSION_ONLINE = "VERSION_ONLINE";
-
-    public static final String EVENTS_TITLE = "EVENTS";
 
     public Database(Context context){
         super(context, DB_NAME, null, DB_VERSION);
@@ -42,11 +42,22 @@ public class Database extends SQLiteOpenHelper {
                                     + DATABASES_VERSION_VERSION_ON_DEVICE + " INTEGER,"
                                     + DATABASES_VERSION_VERSION_ONLINE + " INTEGER)");
             CompleteDatabasesVersion(db);
+            db.execSQL("CREATE TABLE " + EventObject.TITLE + " (" + ID + " INTEGER PRIMARY KEY,"
+                                    + EventObject.NAME + " TEXT,"
+                                    + EventObject.DESCRIPTION + " TEXT,"
+                                    + EventObject.DATA + " TEXT,"
+                                    + EventObject.TIME_START + " INTEGER,"
+                                    + EventObject.CONNECTED_WITH + " TEXT,"
+                                    + EventObject.TIME_END + " INTEGER,"
+                                    + EventObject.IMAGES_PAGE + " TEXT,"
+                                    + EventObject.IMAGES_ON_DEVICES + " TEXT,"
+                                    + EventObject.TAGS + " TEXT,"
+                                    + EventObject.PLACE_ID + " INTEGER)");
         }
     }
 
     private void CompleteDatabasesVersion(SQLiteDatabase db){
-        db.insert(DATABASES_VERSION_TITLE, null, DatabasesVersion(EVENTS_TITLE));
+        db.insert(DATABASES_VERSION_TITLE, null, DatabasesVersion(EventObject.TITLE));
     }
 
     private ContentValues DatabasesVersion(String name){

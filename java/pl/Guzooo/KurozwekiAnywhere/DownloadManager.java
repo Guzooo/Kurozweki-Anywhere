@@ -18,6 +18,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import pl.Guzooo.KurozwekiAnywhere.Events.EventObject;
+
 public class DownloadManager {
 
     private static final String PREFERENCES_NAME = "preferencedatabase";
@@ -29,7 +31,6 @@ public class DownloadManager {
     private static final String LINK = "https://raw.githubusercontent.com/Guzooo/Info/master/Kurozweki%20Anywhere/";
     private static final String LANGUAGE = "en";
     private static final String DATABASES_VERSION = "/DATABASES_VERSION.txt";
-    private static final String EVENTS = "/EVENTS.txt";
 
     public interface DownloadEffects{
         void Start();
@@ -70,16 +71,9 @@ public class DownloadManager {
                 db.close();
                 String preferenceDownloadDatabases = SettingsActivity.getDownloadDatabase(context);
                 autoDownloadDatabases = canAutoDownloadDatabases(preferenceDownloadDatabases, internetConnect, context);
-                if(autoDownloadDatabases)
+                if(autoDownloadDatabases && names.length != 0)
                     Positive(getBooleans());
                 return true;
-
-                //TODO:zapis w bazie danych versji +
-                //TODO:sprawdzenie które wersje są nieaktualne w bazie danych +
-                //TO z oknami chyba trzeba w post read +
-                //wyświetlenie okna dialogowego czy chce zaktualizować konkretne bazy +
-                //array z bazami które użytkownik pozwolił updatnąć +
-                //ReadJSON wszystkich na raz _+
             }
 
             private boolean SaveInfo(SQLiteDatabase db, ArrayList<JSONObject> objects){
@@ -119,7 +113,7 @@ public class DownloadManager {
 
             private String TranslateDatabaseName(String name){ //TODO:kolejne bazy danych
                 switch (name){
-                    case "EVENTS": //TODO:brać z object events :))
+                    case EventObject.TITLE: //TODO:brać z object events :))
                         return context.getString(R.string.database_events);
                 }
                 return context.getString(R.string.error_database);
@@ -132,35 +126,33 @@ public class DownloadManager {
 
             @Override
             public void onPostRead(boolean successful) {
-                if (successful) {
-                    if(!autoDownloadDatabases) {
-                        final boolean[] booleans = getBooleans();
-                        new AlertDialog.Builder(context)
-                                .setTitle(context.getString(R.string.update_database_now))
-                                .setMultiChoiceItems(names, booleans, null)
-                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Positive(booleans);//TODO: po zaaktualizawaniu all End;
-                                    }
-                                })
-                                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Negative();
-                                    }
-                                })
-                                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                                    @Override
-                                    public void onCancel(DialogInterface dialog) {
-                                        Negative();
-                                    }
-                                })
-                                .create()
-                                .show();
-                    }
+                if (successful && !autoDownloadDatabases && names.length != 0) {
+                    final boolean[] booleans = getBooleans();
+                    new AlertDialog.Builder(context)
+                            .setTitle(context.getString(R.string.update_database_now))
+                            .setMultiChoiceItems(names, booleans, null)
+                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Positive(booleans);//TODO: po zaaktualizawaniu all End;
+                                }
+                            })
+                            .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Negative();
+                                }
+                            })
+                            .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    Negative();
+                                }
+                            })
+                            .create()
+                            .show();
                 } else {
-                    effects.End(false);
+                    effects.End(successful);
                 }
             }
 
@@ -196,8 +188,8 @@ public class DownloadManager {
                 name = name.replace(SLASH, "");
                 name = name.replace(FILTES_EXTENDENTS, "");
                 switch (name){
-                    case "EVENTS": //TODO:brać z obiektu
-                        return null; //TODO: zwraca obiekt event;
+                    case EventObject.TITLE: //TODO:brać z obiektu
+                        return new EventObject();
                 }
                 return null;
             }
@@ -216,9 +208,33 @@ public class DownloadManager {
 
                     @Override
                     public boolean onBackground(ArrayList<ArrayList<JSONObject>> objects) {
-                        //TODO:lecisz z rzutowaniem tego do odpowiednich z tabeli model objects
-                        //zapisuje się
-                        return false;
+                        SQLiteDatabase db = Database.getWrite(context);
+                        for(int i = 0; i < objects.size(); i++){
+                            String databaseName = modelObjects.get(i).databaseName();
+                            db.delete(databaseName, null, null);
+                            for(int ii = 0; ii < objects.get(i).size(); ii++){
+                                modelObjects.get(i).SetOfJSON(objects.get(i).get(ii));
+                                modelObjects.get(i).Insert(context);
+                            }
+                            db.update(Database.DATABASES_VERSION_TITLE, getUpdateDatabaseVersion(db, databaseName), Database.DATABASES_VERSION_DATABASE_NAME + " = ?", new String[] {databaseName});
+                        }
+                        db.close();
+                        return true;
+                        //TODO:jak cała baza zaaktualizowana dawaj save dzisiaj;
+                    }
+
+                    private ContentValues getUpdateDatabaseVersion(SQLiteDatabase db, String databaseName){
+                        int databaseVersion = 0;
+                        Cursor cursor = db.query(Database.DATABASES_VERSION_TITLE,
+                                new String[]{Database.DATABASES_VERSION_VERSION_ONLINE},
+                                Database.DATABASES_VERSION_DATABASE_NAME + " = ?",
+                                new String[]{databaseName},null, null, null);
+                        if(cursor.moveToFirst())
+                            databaseVersion = cursor.getInt(0);
+                        cursor.close();
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(Database.DATABASES_VERSION_VERSION_ON_DEVICE, databaseVersion);
+                        return contentValues;
                     }
 
                     @Override
