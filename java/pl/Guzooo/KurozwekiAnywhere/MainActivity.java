@@ -34,6 +34,7 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
     private final String FACEBOOK_G = "https://www.facebook.com/GuzoooApps";
     private final String MESSENGER_G = "https://www.messenger.com/t/GuzoooApps";
     private final String FACEBOOK_PRINCIPAL = "https://www.facebook.com/Pałac-w-Kurozwękach-Kraina-bizonów-299669121906";
+    private final String FACEBOOK_PRINCIPAL2 = "https://www.facebook.com/Browar-Popiel-w-Kurozw%C4%99kach-706678969700528";
 
     private final String BUNDLE_SOCIAL_HEADER = "socialheader";
 
@@ -190,6 +191,8 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
             case R.id.facebook_principal:
                 ClickFacebookPrincipal();
                 break;
+            case R.id.facebook_principal2:
+                ClickFacebookPrincipal2();
         }
     }
 
@@ -256,6 +259,10 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
         OpenPage(FACEBOOK_PRINCIPAL);
     }
 
+    private void ClickFacebookPrincipal2(){
+        OpenPage(FACEBOOK_PRINCIPAL2);
+    }
+
     private void OpenPage(String url){
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -313,6 +320,7 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
         navigationHeader.findViewById(R.id.facebook_g).setOnClickListener(this);
         navigationHeader.findViewById(R.id.messenger_g).setOnClickListener(this);
         navigationHeader.findViewById(R.id.facebook_principal).setOnClickListener(this);
+        navigationHeader.findViewById(R.id.facebook_principal2).setOnClickListener(this);
         SetHeaderVersion();
         SetHeaderLastDataSync();
     }
