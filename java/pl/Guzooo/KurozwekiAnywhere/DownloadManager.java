@@ -10,7 +10,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.util.JsonReader;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -26,7 +25,7 @@ public class DownloadManager {
     private static final String PREFERENCE_LAST_SYNC = "lastsync";
 
     private static final String SLASH = "/";
-    private static final String FILTES_EXTENDENTS = ".txt";
+    private static final String FILES_EXTENSION = ".txt";
 
     private static final String LINK = "https://raw.githubusercontent.com/Guzooo/Info/master/Kurozweki%20Anywhere/";
     private static final String LANGUAGE = "en";
@@ -65,7 +64,7 @@ public class DownloadManager {
                 SQLiteDatabase db = Database.getWrite(context);
                 if(!SaveInfo(db, objects.get(0)))
                     return false;
-                Cursor cursor = getCursor(db);
+                Cursor cursor = getCursorWithDatabaseToUpdate_OfflineMethod(db);
                 SetNamesAndLinks(cursor);
                 cursor.close();
                 db.close();
@@ -90,13 +89,6 @@ public class DownloadManager {
                 }
             }
 
-            private Cursor getCursor(SQLiteDatabase db){
-                return db.query(Database.DATABASES_VERSION_TITLE,
-                        new String[]{Database.DATABASES_VERSION_DATABASE_NAME},
-                        Database.DATABASES_VERSION_VERSION_ON_DEVICE + " != " + Database.DATABASES_VERSION_VERSION_ONLINE,
-                        null, null, null, null);
-            }
-
             String[] names;
             String[] links;
             private void SetNamesAndLinks(Cursor cursor){
@@ -105,23 +97,18 @@ public class DownloadManager {
                 for(int i = 0; i < cursor.getCount(); i++) {
                     if(cursor.moveToPosition(i)) {
                         String name = cursor.getString(0);
-                        names[i] = TranslateDatabaseName(name);
-                        links[i] = SLASH + name + FILTES_EXTENDENTS;
+                        names[i] = Database.getTranslateDatabaseName(name, context);
+                        links[i] = SLASH + name + FILES_EXTENSION;
                     }
                 }
             }
 
-            private String TranslateDatabaseName(String name){ //TODO:kolejne bazy danych
-                switch (name){
-                    case EventObject.TITLE: //TODO:brać z object events :))
-                        return context.getString(R.string.database_events);
-                }
-                return context.getString(R.string.error_database);
-            }
-
             @Override
             public void onUpdate(Integer[] integers) {
-
+                for(Integer i : integers) {
+                    Log.d("CheckInfo", "nr." + i + " to to updatowe " + integers[i]);
+                }
+                        //TODO: update maybe
             }
 
             @Override
@@ -134,7 +121,7 @@ public class DownloadManager {
                             .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Positive(booleans);//TODO: po zaaktualizawaniu all End;
+                                    Positive(booleans);
                                 }
                             })
                             .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -169,7 +156,7 @@ public class DownloadManager {
                 for (int i = 0; i < b.length; i++) {
                     if (b[i]) {
                         strings[i] = LINK + LANGUAGE + links[i];
-                        modelObjects.add(getJSONObject(links[i]));
+                        modelObjects.add(Database.getJSONObject(links[i], SLASH, FILES_EXTENSION));
                     }
                 }
                 ReadJSON readJSON = new ReadJSON(getMethodDownloadDatabase());
@@ -182,16 +169,6 @@ public class DownloadManager {
                     if (bool)
                         length++;
                 return length;
-            }
-
-            private JsonObjects getJSONObject(String name){  //TODO: kolejne bazy danych
-                name = name.replace(SLASH, "");
-                name = name.replace(FILTES_EXTENDENTS, "");
-                switch (name){
-                    case EventObject.TITLE: //TODO:brać z obiektu
-                        return new EventObject();
-                }
-                return null;
             }
 
             private void Negative(){
@@ -218,9 +195,9 @@ public class DownloadManager {
                             }
                             db.update(Database.DATABASES_VERSION_TITLE, getUpdateDatabaseVersion(db, databaseName), Database.DATABASES_VERSION_DATABASE_NAME + " = ?", new String[] {databaseName});
                         }
+                        CheckCompleteSync();
                         db.close();
                         return true;
-                        //TODO:jak cała baza zaaktualizowana dawaj save dzisiaj;
                     }
 
                     private ContentValues getUpdateDatabaseVersion(SQLiteDatabase db, String databaseName){
@@ -237,8 +214,18 @@ public class DownloadManager {
                         return contentValues;
                     }
 
+                    private void CheckCompleteSync(){
+                        if(isDatabasesCurrent_OfflineMethod(context))
+                            SavePreferenceLastSync(context);
+                        else
+                            effects.IsUpdate();
+                    }
+
                     @Override
                     public void onUpdate(Integer[] integers) {
+                        for(Integer i : integers) {
+                            Log.d("UpdateDatabse", "nr." + i + " coś z tego tego " + integers[i]);
+                        }
                         //TODO: maybe postep
                     }
 
@@ -303,5 +290,21 @@ public class DownloadManager {
                 return INTERNET_CELLULAR;
         }
         return INTERNET_DISCONNECT;
+    }
+
+    public static boolean isDatabasesCurrent_OfflineMethod(Context context){
+        SQLiteDatabase db = Database.getRead(context);
+        Cursor cursor = getCursorWithDatabaseToUpdate_OfflineMethod(db);
+        int numberOfDatabaseToUpdate = cursor.getCount();
+        cursor.close();
+        db.close();
+        return numberOfDatabaseToUpdate == 0;
+    }
+
+    private static Cursor getCursorWithDatabaseToUpdate_OfflineMethod (SQLiteDatabase db){
+        return db.query(Database.DATABASES_VERSION_TITLE,
+                new String[]{Database.DATABASES_VERSION_DATABASE_NAME},
+                Database.DATABASES_VERSION_VERSION_ON_DEVICE + " != " + Database.DATABASES_VERSION_VERSION_ONLINE,
+                null, null, null, null);
     }
 }

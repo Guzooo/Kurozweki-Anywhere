@@ -80,13 +80,29 @@ public class Database extends SQLiteOpenHelper {
         Toast.makeText(context, R.string.error_database, Toast.LENGTH_SHORT).show();
     }
 
-    //TODO: grupowe usuwanie każdej tabeli
-
     public static SharedPreferences getSharedPreferences(String name, Context context){
         return context.getSharedPreferences(name, Context.MODE_PRIVATE);
     }
 
     public static SharedPreferences.Editor getSharedPreferencesEditor(String name, Context context){
         return getSharedPreferences(name, context).edit();
+    }
+
+    public static String getTranslateDatabaseName(String name, Context context){
+        switch (name){
+            case EventObject.TITLE:
+                return context.getString(R.string.database_events);
+        }
+        return context.getString(R.string.error_database);
+    }
+
+    public static JsonObjects getJSONObject(String name, String slash, String filesExtension){
+        name = name.replace(slash, "");
+        name = name.replace(filesExtension, "");
+        switch (name){
+            case EventObject.TITLE:
+                return new EventObject();
+        }
+        return null;
     }
 }

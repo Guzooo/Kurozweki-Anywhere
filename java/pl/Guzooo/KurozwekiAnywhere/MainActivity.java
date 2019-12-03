@@ -65,9 +65,8 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
         SetNavigationView();
         SetNavigationHeader();
         SetActionBar();
+        SetSyncIcon();
         AutoSync();
-
-        //TODO:Pobieranie check
     }
 
     private void SetTheme(){
@@ -350,6 +349,13 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
     private void RefreshActionBar(){
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(currentFragment.getActionBarTitle());
+    }
+
+    private void SetSyncIcon(){
+        if(!DownloadManager.isDatabasesCurrent_OfflineMethod(this)){
+            Animations.ChangeIcon((ImageView) headerSync, R.drawable.sync_need);
+            headerSyncOtherImage = true;
+        }
     }
 
     private void AutoSync(){
