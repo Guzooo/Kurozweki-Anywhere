@@ -62,7 +62,7 @@
     <item
         android:id="@+id/report_error"
         android:title="@string/report_error"
-        android:icon="@drawable/report_error"/>
+        android:icon="@drawable/error"/>
 
     <item android:enabled="false"/>
 </menu>

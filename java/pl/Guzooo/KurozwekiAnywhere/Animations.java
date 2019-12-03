@@ -30,7 +30,7 @@ public class Animations {
         anim.start();
     }
 
-    public static ObjectAnimator StartSpinIcon(final View v){
+    public static void StartSpinIcon(final View v){
         ObjectAnimator animRotation =  ObjectAnimator.ofFloat(v, "rotation", -360);
         animRotation.setRepeatMode(ValueAnimator.RESTART);
         animRotation.setRepeatCount(ValueAnimator.INFINITE);
@@ -49,7 +49,20 @@ public class Animations {
             }
         });
         animRotation.start();
-        return animRotation;
+    }
+
+    public static void SpeedStopSpinIcon(final View v){
+        ObjectAnimator animRotation =  ObjectAnimator.ofFloat(v, "rotation", -360);
+        animRotation.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if(v.getRotation() == -360){
+                    v.setRotation(0);
+                }
+            }
+        });
+        animRotation.start();
     }
 
     public static void ErrorSpinIcon(View v){

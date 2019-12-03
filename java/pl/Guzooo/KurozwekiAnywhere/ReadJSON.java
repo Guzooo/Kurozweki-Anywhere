@@ -1,7 +1,6 @@
 package pl.Guzooo.KurozwekiAnywhere;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,7 +18,7 @@ public class ReadJSON extends AsyncTask<String, Integer, Boolean> {
 
     public interface ReadJSONMethod{
         void onPreRead();
-        void onBackground(ArrayList<ArrayList<JSONObject>> objects);
+        boolean onBackground(ArrayList<ArrayList<JSONObject>> objects);
         void onUpdate(Integer[] integers);
         void onPostRead(boolean successful);
     }
@@ -55,8 +54,7 @@ public class ReadJSON extends AsyncTask<String, Integer, Boolean> {
                 objects.add(jsonObjects);
                 publishProgress(i, strings.length);
             }
-            readJSONMethod.onBackground(objects);
-            return true;
+            return readJSONMethod.onBackground(objects);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {

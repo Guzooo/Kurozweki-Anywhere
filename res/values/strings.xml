@@ -27,6 +27,9 @@
 
     <string name="error_database">Database error</string>
 
+    <string name="update_database_now">Update database now?</string>
+    <string name="database_events">Events</string>
+
     <string name="settings_theme">App theme</string>
     <string name="title_theme">Select theme</string>
     <string name="theme_light">Light</string>

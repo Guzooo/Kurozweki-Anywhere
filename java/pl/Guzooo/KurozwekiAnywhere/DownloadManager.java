@@ -1,14 +1,17 @@
 package pl.Guzooo.KurozwekiAnywhere;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.util.JsonReader;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,81 +23,221 @@ public class DownloadManager {
     private static final String PREFERENCES_NAME = "preferencedatabase";
     private static final String PREFERENCE_LAST_SYNC = "lastsync";
 
+    private static final String SLASH = "/";
+    private static final String FILTES_EXTENDENTS = ".txt";
+
     private static final String LINK = "https://raw.githubusercontent.com/Guzooo/Info/master/Kurozweki%20Anywhere/";
     private static final String LANGUAGE = "en";
     private static final String DATABASES_VERSION = "/DATABASES_VERSION.txt";
+    private static final String EVENTS = "/EVENTS.txt";
 
     public interface DownloadEffects{
         void Start();
         void End(boolean successful);
+        void IsUpdate();
         void NoInternet();
     }
 
-    public static void Check(boolean automatic, final DownloadEffects effects, final Context context) {
-        String preferenceDownload = SettingsActivity.getDownloadInfo(context);
-        int internetConnect = getInternetConnection(context);
+    public static void Check(final boolean automatic, final DownloadEffects effects, final Context context) {
+        String preferenceDownloadInfo = SettingsActivity.getDownloadInfo(context);
+        final int internetConnect = getInternetConnection(context);
 
-        if (automatic && !canAutoDownload(preferenceDownload, internetConnect, context)) {
-            Toast.makeText(context, "NIE SPRAWDZE BO ZAKAZANE", Toast.LENGTH_SHORT).show();
-            return; //TODO: Auto failed;
+        if (automatic && !canAutoDownloadInfo(preferenceDownloadInfo, internetConnect, context)) {
+            return;
         }
 
         if (internetConnect == INTERNET_DISCONNECT) {
             effects.NoInternet();
-            return; //TODO:Brak internetu;
+            return;
         }
 
         ReadJSON.ReadJSONMethod readJSONMethod = new ReadJSON.ReadJSONMethod() {
+
             @Override
             public void onPreRead() {
                 effects.Start();
             }
 
+            boolean autoDownloadDatabases;
             @Override
-            public void onBackground(ArrayList<ArrayList<JSONObject>> objects) {
-                for (int i = 0; i < objects.size(); i++) {
-                    for (int ii = 0; ii < objects.get(i).size(); ii++) {
-                        try {
-                            ContentValues contentValues = new ContentValues();
-                            contentValues.put(Database.DATABASES_VERSION_VERSION_ONLINE, objects.get(i).get(ii).getInt(Database.DATABASES_VERSION_VERSION_ONLINE));
+            public boolean onBackground(ArrayList<ArrayList<JSONObject>> objects) {
+                SQLiteDatabase db = Database.getWrite(context);
+                if(!SaveInfo(db, objects.get(0)))
+                    return false;
+                Cursor cursor = getCursor(db);
+                SetNamesAndLinks(cursor);
+                cursor.close();
+                db.close();
+                String preferenceDownloadDatabases = SettingsActivity.getDownloadDatabase(context);
+                autoDownloadDatabases = canAutoDownloadDatabases(preferenceDownloadDatabases, internetConnect, context);
+                if(autoDownloadDatabases)
+                    Positive(getBooleans());
+                return true;
 
-                            SQLiteDatabase db = Database.getWrite(context);
-                            db.update(Database.DATABASES_VERSION_TITLE, contentValues, Database.DATABASES_VERSION_DATABASE_NAME + " = ?", new String[]{objects.get(i).get(ii).getString(Database.DATABASES_VERSION_DATABASE_NAME)});
-                            db.close();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                //TODO:zapis w bazie danych versji +
+                //TODO:sprawdzenie które wersje są nieaktualne w bazie danych +
+                //TO z oknami chyba trzeba w post read +
+                //wyświetlenie okna dialogowego czy chce zaktualizować konkretne bazy +
+                //array z bazami które użytkownik pozwolił updatnąć +
+                //ReadJSON wszystkich na raz _+
+            }
+
+            private boolean SaveInfo(SQLiteDatabase db, ArrayList<JSONObject> objects){
+                try {
+                    for (int i = 0; i < objects.size(); i++) {
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(Database.DATABASES_VERSION_VERSION_ONLINE, objects.get(i).getInt(Database.DATABASES_VERSION_VERSION_ONLINE));
+                        db.update(Database.DATABASES_VERSION_TITLE, contentValues, Database.DATABASES_VERSION_DATABASE_NAME + " = ?", new String[]{objects.get(i).getString(Database.DATABASES_VERSION_DATABASE_NAME)});
+                    }
+                    return true;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+
+            private Cursor getCursor(SQLiteDatabase db){
+                return db.query(Database.DATABASES_VERSION_TITLE,
+                        new String[]{Database.DATABASES_VERSION_DATABASE_NAME},
+                        Database.DATABASES_VERSION_VERSION_ON_DEVICE + " != " + Database.DATABASES_VERSION_VERSION_ONLINE,
+                        null, null, null, null);
+            }
+
+            String[] names;
+            String[] links;
+            private void SetNamesAndLinks(Cursor cursor){
+                names = new String[cursor.getCount()];
+                links = new String[cursor.getCount()];
+                for(int i = 0; i < cursor.getCount(); i++) {
+                    if(cursor.moveToPosition(i)) {
+                        String name = cursor.getString(0);
+                        names[i] = TranslateDatabaseName(name);
+                        links[i] = SLASH + name + FILTES_EXTENDENTS;
                     }
                 }
-                //TODO:zapis w bazie danych versji
-                //TODO:sprawdzenie które wersje są nieaktualne w bazie danych
-                //TO z oknami chyba trzeba w post read
-                //wyświetlenie okna dialogowego czy chce zaktualizować konkretne bazy
-                //array z bazami które użytkownik pozwolił updatnąć
-                //ReadJSON wszystkich na raz
+            }
 
+            private String TranslateDatabaseName(String name){ //TODO:kolejne bazy danych
+                switch (name){
+                    case "EVENTS": //TODO:brać z object events :))
+                        return context.getString(R.string.database_events);
+                }
+                return context.getString(R.string.error_database);
             }
 
             @Override
             public void onUpdate(Integer[] integers) {
-                Toast.makeText(context, "a dam jakis update " + integers[0], Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
             public void onPostRead(boolean successful) {
-                effects.End(successful);
-                if (successful)
-                    Toast.makeText(context, "uda się", Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(context, "błąd", Toast.LENGTH_SHORT).show();
-                //Okna dzialogowe albo że nie dało rady
+                if (successful) {
+                    if(!autoDownloadDatabases) {
+                        final boolean[] booleans = getBooleans();
+                        new AlertDialog.Builder(context)
+                                .setTitle(context.getString(R.string.update_database_now))
+                                .setMultiChoiceItems(names, booleans, null)
+                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Positive(booleans);//TODO: po zaaktualizawaniu all End;
+                                    }
+                                })
+                                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Negative();
+                                    }
+                                })
+                                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                    @Override
+                                    public void onCancel(DialogInterface dialog) {
+                                        Negative();
+                                    }
+                                })
+                                .create()
+                                .show();
+                    }
+                } else {
+                    effects.End(false);
+                }
+            }
+
+            private boolean[] getBooleans(){
+                boolean[] booleans = new boolean[names.length];
+                for(int i = 0; i < names.length; i++)
+                    booleans[i] = true;
+                return booleans;
+            }
+
+            ArrayList<JsonObjects> modelObjects = new ArrayList<>();
+            private void Positive(boolean[] b){
+                String[] strings = new String[getTrueLinksLength(b)];
+                for (int i = 0; i < b.length; i++) {
+                    if (b[i]) {
+                        strings[i] = LINK + LANGUAGE + links[i];
+                        modelObjects.add(getJSONObject(links[i]));
+                    }
+                }
+                ReadJSON readJSON = new ReadJSON(getMethodDownloadDatabase());
+                readJSON.execute(strings);
+            }
+
+            private int getTrueLinksLength(boolean[] b){
+                int length = 0;
+                for(boolean bool : b)
+                    if (bool)
+                        length++;
+                return length;
+            }
+
+            private JsonObjects getJSONObject(String name){  //TODO: kolejne bazy danych
+                name = name.replace(SLASH, "");
+                name = name.replace(FILTES_EXTENDENTS, "");
+                switch (name){
+                    case "EVENTS": //TODO:brać z obiektu
+                        return null; //TODO: zwraca obiekt event;
+                }
+                return null;
+            }
+
+            private void Negative(){
+                effects.End(true);
+                effects.IsUpdate();
+            }
+
+            private ReadJSON.ReadJSONMethod getMethodDownloadDatabase(){
+                return new ReadJSON.ReadJSONMethod() {
+                    @Override
+                    public void onPreRead() {
+
+                    }
+
+                    @Override
+                    public boolean onBackground(ArrayList<ArrayList<JSONObject>> objects) {
+                        //TODO:lecisz z rzutowaniem tego do odpowiednich z tabeli model objects
+                        //zapisuje się
+                        return false;
+                    }
+
+                    @Override
+                    public void onUpdate(Integer[] integers) {
+                        //TODO: maybe postep
+                    }
+
+                    @Override
+                    public void onPostRead(boolean successful) {
+                        effects.End(successful);
+                    }
+                };
             }
         };
         ReadJSON readJSON = new ReadJSON(readJSONMethod);
         readJSON.execute(LINK + LANGUAGE + DATABASES_VERSION);
     }
 
-    private static boolean canAutoDownload(String pref, int connect, Context context){
+    private static boolean canAutoDownloadInfo(String pref, int connect, Context context){
         if(pref.equals(context.getString(R.string.DOWNLOAD_INFO_NEVER)))
             return false;
         if(pref.equals(context.getString(R.string.DOWNLOAD_INFO_ONLY_WIFI)) && connect != INTERNET_WIFI)
@@ -102,6 +245,14 @@ public class DownloadManager {
         return true;
     }
 
+    private static boolean canAutoDownloadDatabases(String pref, int connect, Context context){
+        if(pref.equals(context.getString(R.string.DOWNLOAD_DATABASE_MANUAL)))
+            return false;
+        if(pref.equals(context.getString(R.string.DOWNLOAD_DATABASE_AUTO_ONLY_WIFI)) && connect != INTERNET_WIFI)
+            return false;
+        return true;
+    }
+    
     private static void SavePreferenceLastSync(Context context){
         Database.getSharedPreferencesEditor(PREFERENCES_NAME, context)
                 .putString(PREFERENCE_LAST_SYNC, UtilsCalendar.getTodayWithTime())

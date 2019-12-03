@@ -11,11 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -26,8 +22,6 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewAnimationUtils;
-import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -48,11 +42,12 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
     private NavigationView navigationView;
     private View navigationHeader;
 
-    private View headerSync;
-    private boolean headerSyncOtherImage;
-
     private View socialHeader = null;
     int[] socialHeaderRoundCenter = new int[2];
+
+    private View headerSync;
+    private boolean headerSyncOtherImage;
+    private boolean dataSync;
 
     private NavigationFragment currentFragment;
 
@@ -69,6 +64,7 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
         SetNavigationView();
         SetNavigationHeader();
         SetActionBar();
+        AutoSync();
 
         //TODO:Pobieranie check
     }
@@ -244,33 +240,8 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
     }
 
     private void ClickSync(){
-        //TODO:pobieranko
-        DownloadManager.DownloadEffects effects = new DownloadManager.DownloadEffects() {
-            ObjectAnimator infinityRotate;
-            @Override
-            public void Start() {
-                if(headerSyncOtherImage) {
-                    Animations.ChangeIcon((ImageView) headerSync, R.drawable.sync);
-                    headerSyncOtherImage = false;
-                }
-                infinityRotate = Animations.StartSpinIcon(headerSync);
-            }
-
-            @Override
-            public void End(boolean successful) {
-                infinityRotate.setRepeatCount(0);
-                if(!successful) {
-                    Animations.ChangeIcon((ImageView) headerSync, R.drawable.sync_problem);
-                    headerSyncOtherImage = true;
-                }
-            }
-
-            @Override
-            public void NoInternet() {
-                Animations.ErrorSpinIcon(headerSync);
-            }
-        };
-        DownloadManager.Check(false, effects, this);
+        if(!dataSync)
+            DownloadManager.Check(false, getDownloadEffects(), this);
     }
 
     private void ClickFacebookG(){
@@ -373,6 +344,10 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
         actionBar.setTitle(currentFragment.getActionBarTitle());
     }
 
+    private void AutoSync(){
+        DownloadManager.Check(true, getDownloadEffects(), this);
+    }
+
     private boolean isChangeVisibilitySocialHeader(View center, View header){
         center.getLocationOnScreen(socialHeaderRoundCenter);
         socialHeaderRoundCenter[0] += center.getWidth()/2;
@@ -446,5 +421,41 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
 
     private boolean canHideSocialHeader(boolean show){
         return (socialHeader != null && socialHeader.getVisibility() == View.VISIBLE && !show);
+    }
+
+    private DownloadManager.DownloadEffects getDownloadEffects(){
+        return new DownloadManager.DownloadEffects() {
+
+            @Override
+            public void Start() {
+                dataSync = true;
+                if(headerSyncOtherImage) {
+                    Animations.ChangeIcon((ImageView) headerSync, R.drawable.sync);
+                    headerSyncOtherImage = false;
+                }
+                Animations.StartSpinIcon(headerSync);
+            }
+
+            @Override
+            public void End(boolean successful) {
+                dataSync = false;
+                Animations.SpeedStopSpinIcon(headerSync);
+                if(!successful) {
+                    Animations.ChangeIcon((ImageView) headerSync, R.drawable.error);
+                    headerSyncOtherImage = true;
+                }
+            }
+
+            @Override
+            public void IsUpdate() {
+                Animations.ChangeIcon((ImageView) headerSync, R.drawable.sync_need);
+                headerSyncOtherImage = true;
+            }
+
+            @Override
+            public void NoInternet() {
+                Animations.ErrorSpinIcon(headerSync);
+            }
+        }; //TODO: wyświetlanie "nie ma internetu", "pozytywna synchronizacja", "negatywna synchronizacja"
     }
 }
