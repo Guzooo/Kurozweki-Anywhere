@@ -9,7 +9,7 @@ public class Page1 extends NavigationFragment {
 
     @Override
     public int getActionBarTitle() {
-        return R.string.page1;
+        return R.string.page_attractions;
     }
 
     @Override

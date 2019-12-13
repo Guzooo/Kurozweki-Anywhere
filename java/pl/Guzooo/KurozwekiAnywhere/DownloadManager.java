@@ -70,7 +70,9 @@ public class DownloadManager {
                 db.close();
                 String preferenceDownloadDatabases = SettingsActivity.getDownloadDatabase(context);
                 autoDownloadDatabases = canAutoDownloadDatabases(preferenceDownloadDatabases, internetConnect, context);
-                if(autoDownloadDatabases && names.length != 0)
+                if(names.length == 0)
+                    SavePreferenceLastSync(context);
+                else if(autoDownloadDatabases)
                     Positive(getBooleans());
                 return true;
             }

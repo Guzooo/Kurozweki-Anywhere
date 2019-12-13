@@ -454,6 +454,7 @@ public class MainActivity extends GActivity implements NavigationView.OnNavigati
             public void End(boolean successful) {
                 dataSync = false;
                 Animations.SpeedStopSpinIcon(headerSync);
+                SetHeaderLastDataSync();
                 if(!successful) {
                     Animations.ChangeIcon((ImageView) headerSync, R.drawable.error);
                     headerSyncOtherImage = true;

@@ -1,13 +1,13 @@
 <resources>
-    <string name="app_name">New Unnamed App</string>
+    <string name="app_name">Kurozwęki Anywhere</string>
     <string name="app_G">© Guzooo 2019</string>
     <string name="app_principal">Pałac w Kurozwękach</string>
     <string name="app_principal2">Browar Popiel</string>
 
-    <string name="home_page">Home</string>
-    <string name="page1">Page 1</string>
-    <string name="page2">Page 2</string>
-    <string name="page3">Page 3</string>
+    <string name="page_home">Home</string>
+    <string name="page_attractions">Attractions</string>
+    <string name="page_hotel">Hotel</string>
+    <string name="page_events">@string/database_events</string>
 
     <string name="open_navigation_menu">open menu</string>
     <string name="close_navigation_menu">close menu</string>

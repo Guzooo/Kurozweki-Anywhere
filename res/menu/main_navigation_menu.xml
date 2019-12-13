@@ -7,23 +7,23 @@
 
         <item
             android:id="@+id/home"
-            android:title="@string/home_page"
+            android:title="@string/page_home"
             android:icon="@drawable/home"/>
 
         <item
             android:id="@+id/page1"
-            android:title="@string/page1"
-            android:icon="@drawable/page1"/>
+            android:title="@string/page_attractions"
+            android:icon="@drawable/attractions"/>
 
         <item
             android:id="@+id/page2"
-            android:title="@string/page2"
-            android:icon="@drawable/page2"/>
+            android:title="@string/page_hotel"
+            android:icon="@drawable/hotel"/>
 
         <item
             android:id="@+id/page3"
-            android:title="@string/page3"
-            android:icon="@drawable/page3"/>
+            android:title="@string/page_events"
+            android:icon="@drawable/events"/>
     </group>
 
     <item android:title="@string/contact">
