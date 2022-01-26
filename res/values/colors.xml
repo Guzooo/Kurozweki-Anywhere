@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="accent">#F0AC82</color>
-    <color name="accentDark">#E19A6C</color>//TODO: może być zbędny
-    <color name="thirdG">@color/accent</color>
+    <color name="accentDark">#E19A6C</color><!--TODO: może być zbędny, ewentualnie do darka-->
+    <color name="thirdG">@color/palace</color>
+
+    <color name="palace">#F0AC82</color>
+    <color name="brewery">#27190c</color>
+    <color name="stud">#c1c1c1</color>
 </resources>
