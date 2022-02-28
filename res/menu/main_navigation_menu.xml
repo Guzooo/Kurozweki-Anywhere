@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/home"
+            android:title="@string/home"
+            android:icon="@drawable/ic_home"/>
+
+        <item
+            android:id="@+id/attractions"
+            android:title="@string/attractions"
+            android:icon="@drawable/ic_attraction"/>
+
+        <item
+            android:id="@+id/hotel"
+            android:title="@string/hotel"
+            android:icon="@drawable/ic_hotel"/>
+
+        <item
+            android:id="@+id/events"
+            android:title="@string/events"
+            android:icon="@drawable/ic_event"/>
+    </group>
+
+    <item android:title="@string/contact">
+        <menu>
+            <item
+                android:title="@string/call"
+                android:titleCondensed="call•123456789"
+                android:icon="@drawable/ic_phone"/>
+
+            <item
+                android:title="@string/email"
+                android:titleCondensed="email•123@45.67"
+                android:icon="@drawable/ic_email"/>
+
+            <item
+                android:id="@+id/socials"
+                android:title="@string/more"
+                android:icon="@drawable/ic_more_horizontal"/>
+        </menu>
+    </item>
+
+    <item android:title="@string/other">
+        <menu>
+            <item
+                android:id="@+id/settings"
+                android:title="@string/settings"
+                android:icon="@drawable/ic_settings"/>
+
+            <item
+                android:title="@string/report_error"
+                android:titleCondensed="www•https://www.messenger.com/t/GuzoooApps"
+                android:icon="@drawable/ic_error"/>
+        </menu>
+    </item>
+</menu>

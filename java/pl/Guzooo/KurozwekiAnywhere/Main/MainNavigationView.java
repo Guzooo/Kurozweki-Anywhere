@@ -1,77 +1,142 @@
 package pl.Guzooo.KurozwekiAnywhere.Main;
 
-import android.app.Activity;
-import android.content.Context;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.transition.TransitionManager;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 
-import pl.Guzooo.Base.Elements.BusinessCard;
+import pl.Guzooo.Base.Elements.ElementOfActivity;
+import pl.Guzooo.Base.ModifiedElements.GActivity;
+import pl.Guzooo.Base.Utils.ActionFromItemMenuUtils;
 import pl.Guzooo.KurozwekiAnywhere.R;
 
-public class MainNavigationView {
+public class MainNavigationView extends ElementOfActivity {
 
-    private Context context;
-    private ConstraintLayout header;
-    private View logosHeaderTrigger;
-    private boolean logosHeader = false;
+    ActionBarDrawerToggle drawerToggle;
 
-    public void initialization(Activity activity){
-        context = activity;
-        find(activity);
-        setBusinessCards();
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private MainNavigationHeader header;
+
+    public MainNavigationView(GActivity activity) {
+        super(activity);
+        find();
+        setActionBar();
+        setDrawerLayout();
+        setNavigationController();
     }
 
-    public void openLogosHeader(){
-        if(isLogosHeaderOpen())
-            return;
-        changeHeaderLayout(R.layout.navigation_header_main_logos);
-        logosHeaderTrigger.setVisibility(View.INVISIBLE);
-        logosHeader = true;
+    //TODO: jak szuflada sie zamknie pozamykać logos header
+    @Override
+    public void setWindowsInsets(WindowInsetsCompat insets){
+        header.setWindowsInsets(insets);
+        setWindowsInsetsOnNavigationView(insets);
     }
 
-    public void closeLogosHeader(){
-        if(!isLogosHeaderOpen())
-            return;
-        changeHeaderLayout(R.layout.navigation_header_main);
-        logosHeaderTrigger.setVisibility(View.VISIBLE);
-        logosHeader = false;
+    @Override
+    public void loadInstanceStage(Bundle bundle) {
+        header.loadInstanceStage(bundle);
     }
 
-    public boolean isLogosHeaderOpen(){
-        return logosHeader;
+    @Override
+    public void saveInstanceStage(Bundle bundle) {
+        header.saveInstanceStage(bundle);
     }
 
-    private void find(Activity activity){
-        NavigationView navigationView = activity.findViewById(R.id.navigation_view);
-        header = (ConstraintLayout) navigationView.getHeaderView(0);
-        logosHeaderTrigger = header.findViewById(R.id.logos_header_trigger);
+    @Override
+    public boolean ifClosedSomethingOnBackPressed() {
+        if(header.ifClosedSomethingOnBackPressed())
+            return true;
+        if(drawerLayout.isDrawerOpen(navigationView))
+            drawerLayout.closeDrawer(navigationView);
+        return false;
     }
 
-    private void setBusinessCards() {
-        View logoG = header.findViewById(R.id.logo_g);
-        View logoStud = header.findViewById(R.id.logo_stud);
-        View logoBrewery = header.findViewById(R.id.logo_brewery);
-        View logoPalace = header.findViewById(R.id.logo_palace);
-        BusinessCard businessCardG = header.findViewById(R.id.business_card_g);
-        BusinessCard businessCardStud = header.findViewById(R.id.business_card_stud);
-        BusinessCard businessCardBrewery = header.findViewById(R.id.business_card_brewery);
-        BusinessCard businessCardPalace = header.findViewById(R.id.business_card_palace);
-        businessCardG.setOpenerView(logoG);
-        businessCardStud.setOpenerView(logoStud);
-        businessCardBrewery.setOpenerView(logoBrewery);
-        businessCardPalace.setOpenerView(logoPalace);
-        logosHeaderTrigger.setOnClickListener(view -> openLogosHeader());
+    public ActionBarDrawerToggle getDrawerToggle(){
+        return drawerToggle;
     }
 
-    private void changeHeaderLayout(int layout){
-        ConstraintSet constraintSet = new ConstraintSet();
-        constraintSet.load(context, layout);
-        TransitionManager.beginDelayedTransition(header);
-        constraintSet.applyTo(header);
+    public boolean onOptionsItemSelected(MenuItem item){
+        return ActionFromItemMenuUtils.doAction(item, getActivity());
+    }
+
+    private void find(){
+        navigationView = getActivity().findViewById(R.id.navigation_view);
+        header = new MainNavigationHeader(getActivity(), navigationView);
+    }
+
+    private void setActionBar(){
+        ActionBar actionBar = getActivity().getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+    }
+
+    private void setDrawerLayout(){
+        drawerLayout = getActivity().findViewById(R.id.drawer);
+        drawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+            @Override
+            public boolean onOptionsItemSelected(MenuItem item) {
+                Log.d("MainNavView", "onOptionItemSelected --> " + item.getItemId());
+                /*if(header.ifClosedSomethingOnBackPressed())
+                    return true;*/
+                return super.onOptionsItemSelected(item);
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                header.closeLogosHeader();
+            }
+
+        };
+        drawerLayout.addDrawerListener(drawerToggle);
+        //navigationView.setNavigationItemSelectedListener(item -> );
+    }
+
+    private void setNavigationController(){
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        NavHostFragment navHostFragment = (NavHostFragment) fragmentManager.findFragmentById(R.id.nav_host_fragment);
+        NavController navController = navHostFragment.getNavController();
+
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder().build();
+
+        NavigationUI.setupWithNavController(navigationView, navController);
+        NavigationUI.setupActionBarWithNavController(getActivity(), navController, appBarConfiguration);
+
+        navController.addOnDestinationChangedListener((navController1, navDestination, bundle) -> drawerToggle.syncState());
+    }
+
+    private void setWindowsInsetsOnNavigationView(WindowInsetsCompat insets){
+        navigationView.getChildAt(0).setPadding(0, 0, 0, insets.getSystemWindowInsetBottom());
+        navigationView.setItemHorizontalPadding(navigationView.getItemHorizontalPadding() + insets.getSystemWindowInsetLeft());
+        navigationView.setSubheaderInsetStart(navigationView.getSubheaderInsetStart() + insets.getSystemWindowInsetLeft());
+
+        ViewTreeObserver.OnGlobalLayoutListener onGlobalLayoutListener = getNavigationViewWidthOnGlobalLayoutListener(insets);
+        ViewTreeObserver viewTreeObserver = navigationView.getViewTreeObserver();
+        viewTreeObserver.addOnGlobalLayoutListener(onGlobalLayoutListener);
+    }
+
+    private ViewTreeObserver.OnGlobalLayoutListener getNavigationViewWidthOnGlobalLayoutListener(WindowInsetsCompat insets){
+        return new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                DrawerLayout.LayoutParams layoutParams = (DrawerLayout.LayoutParams) navigationView.getLayoutParams();
+                layoutParams.width = navigationView.getWidth() + insets.getSystemWindowInsetLeft();
+                navigationView.setLayoutParams(layoutParams);
+                navigationView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        };
     }
 }

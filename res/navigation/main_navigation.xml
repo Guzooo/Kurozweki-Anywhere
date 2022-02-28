@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_main"
+    app:startDestination="@id/home">
+
+    <fragment
+        android:id="@+id/home"
+        android:name="pl.Guzooo.KurozwekiAnywhere.Main.HomeFragment"
+        android:label="@string/home"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/attractions"
+        android:name="pl.Guzooo.KurozwekiAnywhere.Main.AttractionFragment"
+        android:label="@string/attractions"
+        tools:layout="@layout/fragment_attraction" />
+    <fragment
+        android:id="@+id/hotel"
+        android:name="pl.Guzooo.KurozwekiAnywhere.Main.HotelFragment"
+        android:label="@string/hotel"
+        tools:layout="@layout/fragment_hotel" />
+    <fragment
+        android:id="@+id/events"
+        android:name="pl.Guzooo.KurozwekiAnywhere.Main.EventsFragment"
+        android:label="@string/events"
+        tools:layout="@layout/fragment_events" />
+</navigation>

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string translatable="false" name="app_name">Kurozwęki Anywhere</string>
-    <string translatable="false" name="year_of_release">2022</string>
+    <string name="app_name" translatable="false">Kurozwęki Anywhere</string>
+    <string name="year_of_release" translatable="false">2022</string>
+
+    <string name="palace">Pałac w Kurozwękach</string>
+    <string name="brewery">Browar Popiel</string>
+    <string name="stud">Stadnica Koni</string>
 </resources>
